@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { GithubContext } from '../context/context';
 import { ExampleChart, Pie3D, Column3D, Bar3D, Doughnut2D } from './Charts';
 const Repos = () => {
-  const {repos} = React.useContext(GithubContext)
+  const { repos } = React.useContext(GithubContext)
   // console.log(repos)
 
   /*let languages = repos.map((obj) => obj.language).filter((value)=>value!==null)
@@ -29,38 +29,60 @@ const Repos = () => {
 
   // my way of extracting the data for the pie chat but due to this there is a perfomance issue in the app as it uses lot of for loops :(
 
- let repoLanguages =  repos.filter((item) => item.language!==null).reduce((total,items)=>{
-   let { language, stargazers_count
-} = items
-    if(!total[language]){
-      total[language] = { label: language, value: 1, stars: stargazers_count
-}
-    }else{
+
+
+
+  let repoLanguages = repos.filter((item) => item.language !== null).reduce((total, items) => {
+    let { language, stargazers_count
+    } = items
+    if (!total[language]) {
       total[language] = {
-        ...total[language], 
-        value: total[language].value += 1, 
-        stars: total[language].stars+stargazers_count
-}
+        label: language, value: 1, stars: stargazers_count
+      }
+    } else {
+      total[language] = {
+        ...total[language],
+        value: total[language].value += 1,
+        stars: total[language].stars + stargazers_count
+      }
     }
-    
+
     return total
-  },{})
+  }, {})
 
 
-  let mostUsed = Object.values(repoLanguages).sort((a,b)=>b.value-a.value).slice(0,5)
+  let mostUsed = Object.values(repoLanguages).sort((a, b) => b.value - a.value).slice(0, 5)
   // console.log(mostUsed)
   let pieData = [
     ...mostUsed
   ]
 
   let mostStars = Object.values(repoLanguages).sort((a, b) => b.stars - a.stars).slice(0, 5).
-  map((item)=>{
-    return {...item,value:item.stars}
-  })
+    map((item) => {
+      return { ...item, value: item.stars }
+    })
 
   let doughnutData = [
-   ...mostStars
+    ...mostStars
   ]
+
+  let { stars, forks } = repos.reduce((total, item) => {
+    let { stargazers_count, name, forks } = item
+
+    total.stars[stargazers_count] = {
+      label: name, value: stargazers_count
+    }
+    total.forks[forks] = {
+      label: name, value: forks
+    }
+    return total
+  }, {
+    stars: {},
+    forks: {}
+  })
+
+   stars = Object.values(stars).slice(-5).reverse()
+   forks = Object.values(forks).slice(-5).reverse()
 
   return (
     <section className='section'>
@@ -68,6 +90,8 @@ const Repos = () => {
         {/* <ExampleChart data={chartData}></ExampleChart> */}
         <Pie3D data={pieData}/>
         <Doughnut2D data={doughnutData}/>
+        <Column3D data={stars} />
+        <Bar3D data={forks} />
       </Wrapper>
     </section>
   )

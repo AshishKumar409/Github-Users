@@ -43,7 +43,7 @@ let Pie3D = ({ data }) => {
         //Set the chart caption
         caption: "Most Used Languages",
         theme: "fusion",
-        pieRadius:'35%'
+        pieRadius:'45%'
       },
       // Chart Data
       data
