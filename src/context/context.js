@@ -6,6 +6,8 @@ import axios from 'axios';
 
 const rootUrl = 'https://api.github.com';
 
+
+
 const GithubContext = React.createContext()
 
 const GithubProvider = ({ children }) => {
@@ -19,13 +21,13 @@ const GithubProvider = ({ children }) => {
   let searchGithubUser = async (user) => {
     toggleError()
     setIsLoading(true)
-    let response = await axios(`${rootUrl}/users/${user}`).catch((err)=>{
+    let response = await axios(`${rootUrl}/users/${user}`).catch((err) => {
       console.log(err)
     })
 
-    if(response){
+    if (response) {
       setGithubUser(response.data)
-      let { login, followers_url} = response.data
+      let { login, followers_url } = response.data
 
       //get repos
       // axios(`${rootUrl}/users/${login}/repos?per_page=100`).then((values)=>{
@@ -37,19 +39,19 @@ const GithubProvider = ({ children }) => {
       //   setFollowers(values.data)
       // })
 
-      await Promise.allSettled([axios(`${rootUrl}/users/${login}/repos?per_page=100`), axios(`${followers_url}?per_page=100`)]).then((data)=>{
-        let [repos,followers] = data
+      await Promise.allSettled([axios(`${rootUrl}/users/${login}/repos?per_page=100`), axios(`${followers_url}?per_page=100`)]).then((data) => {
+        let [repos, followers] = data
         let status = 'fulfilled'
-        if(repos.status===status){
-           setRepos(repos.value.data)
+        if (repos.status === status) {
+          setRepos(repos.value.data)
         }
-        if(followers.status===status){
-           setFollowers(followers.value.data)
+        if (followers.status === status) {
+          setFollowers(followers.value.data)
         }
-      }).catch(err=>console.log(err))
+      }).catch(err => console.log(err))
 
 
-    }else{
+    } else {
       toggleError(true, "Sorry, the username does not exist")
     }
     checkRequests()
@@ -77,7 +79,7 @@ const GithubProvider = ({ children }) => {
 
   useEffect(checkRequests, [])
 
-  return <GithubContext.Provider value={{ githubUser, repos, followers, requests, error ,searchGithubUser,isLoading}}>
+  return <GithubContext.Provider value={{ githubUser, repos, followers, requests, error, searchGithubUser, isLoading }}>
     {children}
   </GithubContext.Provider>
 }
