@@ -1,12 +1,14 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
-const PrivateRoute = ({children,...rest}) => {
-  let {isAuthenticated,user} = useAuth0()
+const PrivateRoute = ({ children }) => {
+
+  let { isAuthenticated, user } = useAuth0()
   let isUser = isAuthenticated && user
-  return <Route {...rest} render={()=>{
-    return isUser ? children : <Redirect to="/login"/>
-  }} ></Route>;
+  if (!isUser) {
+    return <Navigate to='/login' />
+  }
+  return children
 };
 export default PrivateRoute;
